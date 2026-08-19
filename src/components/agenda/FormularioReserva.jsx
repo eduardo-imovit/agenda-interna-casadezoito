@@ -73,7 +73,7 @@ export default function FormularioReserva({ salas, valoresIniciais, souDono, ehA
               <input value={titulo} onChange={(e) => setTitulo(e.target.value)} disabled={!podeEditar} required placeholder="Ex: Reunião com cliente" />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+            <div className="form-grid-2">
               <div className="field">
                 <label>Início</label>
                 <input type="datetime-local" value={inicio} onChange={(e) => setInicio(e.target.value)} disabled={!podeEditar} required />

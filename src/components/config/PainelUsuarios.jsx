@@ -66,6 +66,7 @@ export default function PainelUsuarios() {
         </div>
       )}
 
+      <div className="table-scroll">
       <table className="data-table">
         <thead>
           <tr>
@@ -104,6 +105,7 @@ export default function PainelUsuarios() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

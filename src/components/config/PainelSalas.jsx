@@ -55,7 +55,8 @@ export default function PainelSalas() {
         </div>
       )}
 
-      <table className="data-table" style={{ marginBottom: 'var(--space-6)' }}>
+      <div className="table-scroll" style={{ marginBottom: 'var(--space-6)' }}>
+      <table className="data-table">
         <thead>
           <tr>
             <th>Cor</th>
@@ -78,8 +79,9 @@ export default function PainelSalas() {
           ))}
         </tbody>
       </table>
+      </div>
 
-      <form onSubmit={handleCriar} className="card card-body" style={{ maxWidth: 560, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+      <form onSubmit={handleCriar} className="card card-body form-grid-2" style={{ maxWidth: 560 }}>
         <div className="field" style={{ gridColumn: '1 / -1' }}>
           <label>Nova sala</label>
           <input required value={novaSala.nome} onChange={(e) => setNovaSala({ ...novaSala, nome: e.target.value })} placeholder="Nome da sala" />

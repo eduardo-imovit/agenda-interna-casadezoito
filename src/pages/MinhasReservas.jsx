@@ -36,6 +36,7 @@ export default function MinhasReservas() {
           <div className="empty-title">Você ainda não fez nenhuma reserva</div>
         </div>
       ) : (
+        <div className="table-scroll">
         <table className="data-table">
           <thead>
             <tr>
@@ -68,6 +69,7 @@ export default function MinhasReservas() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {formulario && (

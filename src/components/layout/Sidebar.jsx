@@ -18,7 +18,7 @@ const links = [
   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ aberto = false, onFechar }) {
   const { session } = useSession()
   const { perfil } = usePerfil()
   const email = session?.user?.email ?? ''
@@ -31,7 +31,7 @@ export default function Sidebar() {
   }
 
   return (
-    <nav className="sidebar">
+    <nav className={`sidebar${aberto ? ' is-open' : ''}`}>
       <div className="sidebar-brand">
         <img src={logoBeige} alt="Casa Dezoito" style={{ height: 32, width: 'auto', marginBottom: 10 }} />
         <div className="sidebar-logo">salas hub</div>
@@ -44,6 +44,7 @@ export default function Sidebar() {
           <NavLink
             to={link.to}
             end={link.end}
+            onClick={onFechar}
             className={({ isActive }) => `sidebar-item${isActive ? ' is-active' : ''}`}
           >
             <span className="sidebar-nav-dot" style={{ background: 'currentColor', opacity: 0.6 }} />
@@ -55,6 +56,7 @@ export default function Sidebar() {
               <NavLink
                 key={child.to}
                 to={child.to}
+                onClick={onFechar}
                 className={({ isActive }) => `sidebar-item sidebar-subitem${isActive ? ' is-active' : ''}`}
               >
                 <span className="sidebar-nav-dot" style={{ background: 'currentColor', opacity: 0.4 }} />

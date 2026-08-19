@@ -92,6 +92,11 @@
 .field input::placeholder, .field textarea::placeholder { color: var(--ink-faint); }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
 .field textarea { height: 88px; padding: var(--space-3) var(--space-4); resize: vertical; line-height: 1.5; }
+
+@media (max-width: 860px) {
+  /* Menor que 16px faz o iOS Safari dar zoom automático ao focar o campo. */
+  .field input, .field select, .field textarea { font-size: 16px; }
+}
 .field-hint { font-size: 11px; color: var(--ink-soft); }
 .field-error input, .field-error select, .field-error textarea { border-color: var(--danger); }
 .field-error .field-hint { color: var(--danger); }
@@ -233,7 +238,14 @@
 .modal-footer {
   padding: var(--space-4) var(--space-6);
   background: var(--bg);
-  display: flex; justify-content: flex-end; gap: var(--space-3);
+  display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .modal-overlay { padding: var(--space-3); align-items: flex-end; }
+  .modal { max-width: none; }
+  .modal-footer { flex-direction: column-reverse; }
+  .modal-footer .btn { width: 100%; }
 }
 .modal-close {
   background: transparent; border: none; cursor: pointer;
@@ -571,6 +583,57 @@
 }
 .sidebar-footer-name { font-size: var(--text-xs); color: var(--surface); font-weight: var(--weight-medium); }
 .sidebar-footer-role { font-size: 10px; color: #888; }
+
+/* ------- MOBILE: sidebar vira gaveta, topbar fixa com botão de menu ------- */
+.app-topbar { display: none; }
+.sidebar-backdrop { display: none; }
+
+@media (max-width: 860px) {
+  .app-topbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    height: 56px;
+    padding: 0 var(--space-4);
+    background: var(--ink);
+    color: var(--surface);
+  }
+  .app-topbar-burger {
+    background: transparent;
+    border: none;
+    color: var(--surface);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: var(--space-2);
+    margin: calc(var(--space-2) * -1);
+  }
+  .app-topbar-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--primary-light); }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(280px, 82vw);
+    height: 100vh;
+    z-index: var(--z-drawer);
+    box-shadow: var(--shadow-xl);
+    transform: translateX(-100%);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,16,14,.45);
+    z-index: calc(var(--z-drawer) - 1);
+    animation: fade-in var(--duration-base) var(--ease-out);
+  }
+}
 
 /* ============================================================
    STAT CARD
