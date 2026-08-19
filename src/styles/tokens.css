@@ -1,0 +1,171 @@
+/* ============================================================
+   SALAS HUB — DESIGN TOKENS
+   Fonte única de verdade. Importe em qualquer tela do app.
+   ============================================================ */
+
+:root {
+  /* ---------- MARCA (Casa Dezoito — sampleado dos 4 logos) ---------- */
+  --brand-camel:      #BE9D77;
+  --brand-terracotta: #BA6D59;
+  --brand-beige:      #DCD4CD;
+  --brand-brown:      #3B312A;
+  --brand-cream:      #FAF6F1;
+
+  /* ---------- BASE / NEUTROS (rampa quente, creme → marrom) ---------- */
+  --bg:           var(--brand-cream);
+  --bg-subtle:    #FFFFFF;
+  --line:         color-mix(in oklab, var(--brand-cream) 60%, var(--brand-brown));
+  --ink:          var(--brand-brown);
+  --ink-mid:      color-mix(in oklab, var(--brand-brown) 80%, var(--brand-beige));
+  --ink-soft:     color-mix(in oklab, var(--brand-brown) 55%, var(--brand-beige));
+  --ink-faint:    color-mix(in oklab, var(--brand-brown) 30%, var(--brand-beige));
+  --surface:      #FFFFFF;
+
+  /* ---------- PRIMÁRIA (terracota = ação, ecoa o logo) ---------- */
+  --primary:       var(--brand-terracotta);
+  --primary-light: color-mix(in oklab, var(--brand-terracotta) 55%, var(--brand-cream));
+  --primary-soft:  color-mix(in oklab, var(--brand-terracotta) 18%, var(--brand-cream));
+  --primary-dark:  color-mix(in oklab, var(--brand-terracotta) 78%, var(--brand-brown));
+
+  /* ---------- SALAS (acentos categóricos, até 6 — família terrosa, calibrados p/ contraste com texto branco) ---------- */
+  --sala-1: #BA6D59; /* terracota */
+  --sala-2: #5F7346; /* musgo escuro */
+  --sala-3: #9C7A45; /* bronze/camel escuro */
+  --sala-4: #5A6B7D; /* azul-ardósia */
+  --sala-5: #8C4048; /* bordô */
+  --sala-6: #A67B2E; /* ocre escuro */
+
+  /* ---------- SEMÂNTICOS (mesma temperatura da marca) ---------- */
+  --success:        #5C7A52;
+  --success-soft:   color-mix(in oklab, #5C7A52 16%, var(--brand-cream));
+  --warning:        #B8823A;
+  --warning-soft:   color-mix(in oklab, #B8823A 18%, var(--brand-cream));
+  --danger:         #A23B2E;
+  --danger-soft:    color-mix(in oklab, #A23B2E 16%, var(--brand-cream));
+  --info:           #4A6B85;
+  --info-soft:      color-mix(in oklab, #4A6B85 16%, var(--brand-cream));
+
+  /* ---------- TIPOGRAFIA ---------- */
+  --font-serif:   'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font-sans:    'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Escala tipográfica */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   17px;
+  --text-lg:   20px;
+  --text-xl:   26px;
+  --text-2xl:  34px;
+  --text-3xl:  48px;
+  --text-4xl:  64px;
+
+  /* Pesos */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
+  /* ---------- ESPAÇAMENTO (8pt) ---------- */
+  --space-0:  0px;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ---------- LAYOUT / GRID ---------- */
+  --grid-cols: 12;
+  --grid-gap:  var(--space-5);
+  --container-sm:  640px;
+  --container-md:  900px;
+  --container-lg:  1200px;
+  --container-xl:  1440px;
+
+  /* ---------- BORDAS & RAIOS (cantos grandes, botões em pílula) ---------- */
+  --radius-xs:    4px;
+  --radius-sm:    6px;
+  --radius-md:    8px;
+  --radius-lg:    16px;
+  --radius-xl:    20px;
+  --radius-2xl:   24px;
+  --radius-full:  999px;
+
+  --border:        1px solid var(--line);
+  --border-strong: 1.5px solid var(--line);
+  --border-focus:  1.5px solid var(--primary);
+
+  /* ---------- ELEVAÇÃO (sombra quente, base marrom) ---------- */
+  --shadow-xs: 0 1px 2px rgba(59,49,42,.05);
+  --shadow-sm: 0 1px 3px rgba(59,49,42,.07);
+  --shadow-md: 0 4px 16px rgba(59,49,42,.08);
+  --shadow-lg: 0 8px 32px rgba(59,49,42,.10);
+  --shadow-xl: 0 20px 60px rgba(59,49,42,.16);
+  --shadow-primary: 0 6px 24px rgba(186,109,89,.25);
+
+  /* ---------- MOTION ---------- */
+  --duration-instant: 80ms;
+  --duration-fast:    160ms;
+  --duration-base:    220ms;
+  --duration-slow:    360ms;
+  --duration-poetic:  600ms;
+
+  --ease-out:     cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out:  cubic-bezier(.65, 0, .35, 1);
+  --ease-soft:    cubic-bezier(.4, 0, .2, 1);
+  --ease-spring:  cubic-bezier(.34, 1.56, .64, 1);
+
+  --transition-base: all var(--duration-fast) var(--ease-out);
+  --transition-color: color var(--duration-fast) var(--ease-out),
+                      background-color var(--duration-fast) var(--ease-out),
+                      border-color var(--duration-fast) var(--ease-out);
+
+  /* ---------- Z-INDEX ---------- */
+  --z-base:    1;
+  --z-sticky:  100;
+  --z-drawer:  200;
+  --z-modal:   300;
+  --z-toast:   400;
+  --z-tooltip: 500;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   UTILS — apenas o essencial
+   ============================================================ */
+.font-mono  { font-family: var(--font-mono); }
+
+.text-primary { color: var(--primary); }
+.text-ink     { color: var(--ink); }
+.text-soft    { color: var(--ink-soft); }
+
+.muted { color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
