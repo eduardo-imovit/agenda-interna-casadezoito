@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useSalas } from '../hooks/useSalas'
 import { useReservas } from '../hooks/useReservas'
 import { usePerfil } from '../hooks/usePerfil'
@@ -10,6 +11,7 @@ import FormularioReserva from '../components/agenda/FormularioReserva'
 export default function Agenda() {
   const [dataFoco, setDataFoco] = useState(hojeISO())
   const [formulario, setFormulario] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const { salas, carregando: carregandoSalas } = useSalas()
   const { session } = useSession()
@@ -21,11 +23,18 @@ export default function Agenda() {
 
   const titulo = useMemo(() => formatarDataLonga(new Date(`${dataFoco}T12:00:00`)), [dataFoco])
 
-  function abrirNovaReserva() {
+  function abrirNovaReserva(salaIdPreferida) {
     const inicio = new Date(`${dataFoco}T09:00:00`)
     const fim = new Date(inicio.getTime() + 60 * 60 * 1000)
-    setFormulario({ sala_id: salas[0]?.id ?? '', inicio, fim, titulo: '' })
+    setFormulario({ sala_id: salaIdPreferida ?? salas[0]?.id ?? '', inicio, fim, titulo: '' })
   }
+
+  // Vindo do mapa da Home (clique numa sala) — abre direto o formulário com a sala escolhida.
+  useEffect(() => {
+    if (carregandoSalas || searchParams.get('nova') !== '1') return
+    abrirNovaReserva(searchParams.get('sala'))
+    setSearchParams({}, { replace: true })
+  }, [carregandoSalas])
 
   function abrirEdicao(reserva) {
     setFormulario(reserva)
@@ -54,7 +63,7 @@ export default function Agenda() {
           <div className="page-sub">Cada cor é uma sala. Clique num evento pra ver ou editar.</div>
         </div>
         {salas.length > 0 && (
-          <button type="button" className="btn btn-primary btn-sm" onClick={abrirNovaReserva}>+ Nova reserva</button>
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => abrirNovaReserva()}>+ Nova reserva</button>
         )}
       </div>
 

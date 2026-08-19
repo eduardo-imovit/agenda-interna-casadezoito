@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { usePlantas } from '../../hooks/usePlantas'
 import { useSalas } from '../../hooks/useSalas'
 
 const LIMIAR_ARRASTO = 4 // px — abaixo disso um mousedown+mouseup conta como clique, não arrasto
 
 export default function MapaPlantas({ ehAdmin }) {
+  const navigate = useNavigate()
   const { plantas, carregando: carregandoPlantas, criarPlanta, renomearPlanta, excluirPlanta } = usePlantas()
   const { salas, atualizarSala } = useSalas({ somenteAtivas: false })
 
@@ -252,7 +254,8 @@ export default function MapaPlantas({ ehAdmin }) {
               <div
                 key={sala.id}
                 onPointerDown={(e) => handlePointerDownMarcador(e, sala)}
-                title={sala.nome}
+                onClick={() => { if (!editando) navigate(`/agenda?sala=${sala.id}&nova=1`) }}
+                title={editando ? sala.nome : `Agendar em ${sala.nome}`}
                 style={{
                   position: 'absolute',
                   left: `${x}%`,
@@ -266,7 +269,7 @@ export default function MapaPlantas({ ehAdmin }) {
                   background: 'var(--surface)',
                   border: `1px solid ${sala.cor}`,
                   boxShadow: 'var(--shadow-sm)',
-                  cursor: editando ? 'grab' : 'default',
+                  cursor: editando ? 'grab' : 'pointer',
                   opacity: visivel ? 1 : 0,
                   transition: arrastandoEssa ? 'none' : 'opacity 220ms ease-out',
                   whiteSpace: 'nowrap',
