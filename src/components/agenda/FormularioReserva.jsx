@@ -22,7 +22,8 @@ export default function FormularioReserva({ salas, valoresIniciais, nomeUsuario,
   const [erro, setErro] = useState('')
   const [salvando, setSalvando] = useState(false)
 
-  const podeEditar = !editando || souDono || ehAdmin
+  const podeEditar = !editando || souDono
+  const podeCancelar = editando && (souDono || ehAdmin)
   const salaSelecionada = salas.find((s) => s.id === salaId)
   const usuariosDaEmpresa = empresaId ? usuarios.filter((u) => u.empresa_id === empresaId) : usuarios
 
@@ -136,7 +137,7 @@ export default function FormularioReserva({ salas, valoresIniciais, nomeUsuario,
           </div>
 
           <div className="modal-footer">
-            {editando && podeEditar && (
+            {podeCancelar && (
               <button type="button" className="btn btn-danger" onClick={handleCancelar} disabled={salvando}>
                 Cancelar reserva
               </button>
