@@ -55,8 +55,20 @@ export default function Login() {
       setErro(error.message.includes('already registered') ? 'Esse e-mail já tem conta.' : 'Não foi possível criar a conta.')
       return
     }
-    setAviso('Conta criada! Confirme seu e-mail (se pedido) e faça login.')
-    trocarModo('entrar')
+    trocarModo('confirme-email')
+  }
+
+  async function handleReenviarConfirmacao() {
+    setErro('')
+    setAviso('')
+    setEnviando(true)
+    const { error } = await supabase.auth.resend({ type: 'signup', email })
+    setEnviando(false)
+    if (error) {
+      setErro('Não foi possível reenviar o e-mail. Tente de novo em instantes.')
+      return
+    }
+    setAviso('E-mail reenviado.')
   }
 
   async function handleEsqueciSenha(e) {
@@ -191,6 +203,26 @@ export default function Login() {
               ← Voltar para login
             </button>
           </form>
+        )}
+
+        {modo === 'confirme-email' && (
+          <div className="login-form">
+            <div className="stat-sub is-muted" style={{ lineHeight: 1.6 }}>
+              Enviamos um link de confirmação para <strong>{email}</strong>. Abra sua caixa de entrada (e a pasta
+              de spam, por garantia) e clique no link para ativar sua conta.
+            </div>
+
+            {erro && <div className="login-error">{erro}</div>}
+            {aviso && <div className="stat-sub is-muted">{aviso}</div>}
+
+            <button type="button" className="btn btn-secondary login-submit" disabled={enviando} onClick={handleReenviarConfirmacao}>
+              {enviando ? 'Reenviando…' : 'Reenviar e-mail de confirmação'}
+            </button>
+
+            <button type="button" className="btn-link" style={{ fontSize: 'var(--text-xs)' }} onClick={() => trocarModo('entrar')}>
+              ← Voltar para login
+            </button>
+          </div>
         )}
 
         {modo === 'esqueci-senha' && (
