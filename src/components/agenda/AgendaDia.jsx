@@ -49,7 +49,7 @@ function calcularLayout(reservas) {
   return resultado
 }
 
-export default function AgendaDia({ reservas, onEventoClick }) {
+export default function AgendaDia({ reservas, salaFiltro, onEventoClick }) {
   const horas = useMemo(() => {
     const lista = []
     for (let h = HORA_INICIO; h < HORA_FIM; h++) lista.push(h)
@@ -62,8 +62,10 @@ export default function AgendaDia({ reservas, onEventoClick }) {
   if (reservas.length === 0) {
     return (
       <div className="empty">
-        <div className="empty-title">Nenhuma reserva nesse dia</div>
-        <div className="empty-sub">O prédio está livre. Clique em "+ Nova reserva" pra marcar um horário.</div>
+        <div className="empty-title">Nenhuma reserva {salaFiltro ? `na ${salaFiltro}` : 'nesse dia'}</div>
+        <div className="empty-sub">
+          {salaFiltro ? `A sala "${salaFiltro}" está livre nesse dia.` : 'O prédio está livre.'} Clique em "+ Nova reserva" pra marcar um horário.
+        </div>
       </div>
     )
   }

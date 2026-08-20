@@ -11,6 +11,7 @@ import FormularioReserva from '../components/agenda/FormularioReserva'
 export default function Agenda() {
   const [dataFoco, setDataFoco] = useState(hojeISO())
   const [formulario, setFormulario] = useState(null)
+  const [filtroSalaId, setFiltroSalaId] = useState('')
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { salas, carregando: carregandoSalas } = useSalas()
@@ -20,6 +21,8 @@ export default function Agenda() {
   const inicioISO = `${dataFoco}T00:00:00`
   const fimISO = `${dataFoco}T23:59:59`
   const { reservas, carregando: carregandoReservas, criarReserva, atualizarReserva, cancelarReserva } = useReservas({ inicioISO, fimISO, somenteConfirmadas: true })
+  const reservasFiltradas = filtroSalaId ? reservas.filter((r) => r.sala_id === filtroSalaId) : reservas
+  const salaFiltro = salas.find((s) => s.id === filtroSalaId)
 
   const titulo = useMemo(() => formatarDataLonga(new Date(`${dataFoco}T12:00:00`)), [dataFoco])
 
@@ -66,7 +69,7 @@ export default function Agenda() {
           <div className="page-sub">Cada cor é uma sala. Clique num evento pra ver ou editar.</div>
         </div>
         {salas.length > 0 && (
-          <button type="button" className="btn btn-primary btn-sm" onClick={() => abrirNovaReserva()}>+ Nova reserva</button>
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => abrirNovaReserva(filtroSalaId || undefined)}>+ Nova reserva</button>
         )}
       </div>
 
@@ -80,6 +83,16 @@ export default function Agenda() {
             <span className="grade-nav-title">{titulo}</span>
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => setDataFoco(hojeISO())}>Hoje</button>
           </div>
+
+          {salas.length > 0 && (
+            <div className="field" style={{ margin: 0, minWidth: 180 }}>
+              <label>Sala</label>
+              <select value={filtroSalaId} onChange={(e) => setFiltroSalaId(e.target.value)}>
+                <option value="">Todas as salas</option>
+                {salas.map((s) => <option key={s.id} value={s.id}>{s.nome}</option>)}
+              </select>
+            </div>
+          )}
         </div>
 
         {carregandoSalas || carregandoReservas ? (
@@ -90,7 +103,7 @@ export default function Agenda() {
             <div className="empty-sub">Peça a um admin pra cadastrar as salas do prédio.</div>
           </div>
         ) : (
-          <AgendaDia reservas={reservas} onEventoClick={abrirEdicao} />
+          <AgendaDia reservas={reservasFiltradas} salaFiltro={salaFiltro?.nome} onEventoClick={abrirEdicao} />
         )}
       </div>
 
