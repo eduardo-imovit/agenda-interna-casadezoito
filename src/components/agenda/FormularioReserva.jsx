@@ -126,11 +126,11 @@ export default function FormularioReserva({ salas, valoresIniciais, nomeUsuario,
             <div className="form-grid-2">
               <div className="field">
                 <label>Início</label>
-                <input type="datetime-local" value={inicio} onChange={(e) => setInicio(e.target.value)} disabled={!podeEditar} required />
+                <input type="datetime-local" step={900} value={inicio} onChange={(e) => setInicio(e.target.value)} disabled={!podeEditar} required />
               </div>
               <div className="field">
                 <label>Fim</label>
-                <input type="datetime-local" value={fim} onChange={(e) => setFim(e.target.value)} disabled={!podeEditar} required />
+                <input type="datetime-local" step={900} value={fim} onChange={(e) => setFim(e.target.value)} disabled={!podeEditar} required />
               </div>
             </div>
           </div>
