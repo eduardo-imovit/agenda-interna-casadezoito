@@ -19,6 +19,7 @@ export default function MapaPlantas({ ehAdmin }) {
   const [mensagem, setMensagem] = useState(null)
   const [visivel, setVisivel] = useState(true)
   const [posicaoArrasto, setPosicaoArrasto] = useState(null) // { salaId, x, y } — só enquanto arrasta
+  const [salaHoverId, setSalaHoverId] = useState(null)
 
   const wrapperRef = useRef(null)
   const arrasto = useRef(null)
@@ -36,6 +37,7 @@ export default function MapaPlantas({ ehAdmin }) {
   const plantaAtual = plantas.find((p) => p.id === plantaId) ?? null
   const marcadores = plantaAtual ? salas.filter((s) => s.planta_id === plantaAtual.id && s.pos_x != null && s.pos_y != null) : []
   const salasAtivas = salas.filter((s) => s.ativa)
+  const salaEmHover = !editando ? marcadores.find((s) => s.id === salaHoverId) : null
 
   function coordsDoEvento(e) {
     const rect = wrapperRef.current.getBoundingClientRect()
@@ -246,6 +248,23 @@ export default function MapaPlantas({ ehAdmin }) {
               transition: 'opacity 220ms ease-out, transform 220ms ease-out',
             }}
           />
+          <img
+            src={salaEmHover?.imagem_hover_url ?? plantaAtual.imagem_url}
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              display: 'block',
+              borderRadius: 'var(--radius-md)',
+              userSelect: 'none',
+              pointerEvents: 'none',
+              opacity: salaEmHover?.imagem_hover_url ? 1 : 0,
+              transition: 'opacity 220ms ease-out',
+            }}
+          />
           {marcadores.map((sala) => {
             const arrastandoEssa = posicaoArrasto?.salaId === sala.id
             const x = arrastandoEssa ? posicaoArrasto.x : sala.pos_x
@@ -255,6 +274,8 @@ export default function MapaPlantas({ ehAdmin }) {
                 key={sala.id}
                 onPointerDown={(e) => handlePointerDownMarcador(e, sala)}
                 onClick={() => { if (!editando) navigate(`/agenda?sala=${sala.id}&nova=1`) }}
+                onMouseEnter={() => { if (!editando) setSalaHoverId(sala.id) }}
+                onMouseLeave={() => setSalaHoverId((atual) => (atual === sala.id ? null : atual))}
                 title={editando ? sala.nome : `Agendar em ${sala.nome}`}
                 style={{
                   position: 'absolute',
