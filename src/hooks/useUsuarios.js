@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-/** Lista de usuários (perfis) pro painel de Configurações > Usuários, só pra admin. */
+/** Lista de usuários (perfis) — painel de Configurações > Usuários (admin) e o seletor de responsável na reserva. */
 export function useUsuarios() {
   const [usuarios, setUsuarios] = useState([])
   const [carregando, setCarregando] = useState(true)
@@ -10,7 +10,7 @@ export function useUsuarios() {
     setCarregando(true)
     const { data, error } = await supabase
       .from('perfis')
-      .select('id, nome, email, role, empresas ( nome )')
+      .select('id, nome, email, role, empresa_id, empresas ( nome )')
       .order('nome')
     if (!error) setUsuarios(data ?? [])
     setCarregando(false)

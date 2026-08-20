@@ -26,10 +26,11 @@ export function useReservas({ inicioISO, fimISO, usuarioId, somenteConfirmadas =
 
   useEffect(() => { recarregar() }, [recarregar])
 
-  async function criarReserva({ salaId, usuarioId: dono, titulo, responsavel, convidados, inicio, fim }) {
+  async function criarReserva({ salaId, usuarioId: dono, empresaId, titulo, responsavel, convidados, inicio, fim }) {
     const { error } = await supabase.from('reservas').insert({
       sala_id: salaId,
       usuario_id: dono,
+      empresa_id: empresaId,
       titulo,
       responsavel,
       convidados,

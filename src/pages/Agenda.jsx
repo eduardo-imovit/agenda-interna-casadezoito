@@ -47,6 +47,7 @@ export default function Agenda() {
       await criarReserva({
         salaId: dados.sala_id,
         usuarioId: session.user.id,
+        empresaId: dados.empresa_id,
         titulo: dados.titulo,
         responsavel: dados.responsavel,
         convidados: dados.convidados,
@@ -98,6 +99,7 @@ export default function Agenda() {
           salas={salas}
           valoresIniciais={formulario}
           nomeUsuario={perfil?.nome}
+          empresaIdUsuario={perfil?.empresa_id}
           souDono={!formulario.id || formulario.usuario_id === session?.user?.id}
           ehAdmin={perfil?.role === 'admin'}
           onSalvar={salvar}
