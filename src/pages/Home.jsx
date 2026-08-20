@@ -2,14 +2,12 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 import { useReservas } from '../hooks/useReservas'
-import { useSalas } from '../hooks/useSalas'
 import { usePerfil } from '../hooks/usePerfil'
 import MapaPlantas from '../components/config/MapaPlantas'
 import { formatarHora, hojeISO } from '../lib/dateUtils'
 
 export default function Home() {
   const { session } = useSession()
-  const { salas, carregando: carregandoSalas } = useSalas()
   const { perfil } = usePerfil()
   const ehAdmin = perfil?.role === 'admin'
   const { inicioISO, fimISO } = useMemo(() => ({
@@ -23,38 +21,10 @@ export default function Home() {
       <div className="page-header">
         <div>
           <div className="page-eyebrow">Prédio</div>
-          <div className="page-title">Salas</div>
+          <div className="page-title">Mapa das salas</div>
+          <div className="page-sub">Clique numa sala no mapa pra agendar direto.</div>
         </div>
         <Link to="/agenda" className="btn btn-secondary btn-sm">Ver agenda</Link>
-      </div>
-
-      {carregandoSalas ? (
-        <div className="hub-loading">Carregando…</div>
-      ) : salas.length === 0 ? (
-        <div className="empty">
-          <div className="empty-title">Nenhuma sala cadastrada</div>
-          <div className="empty-sub">Peça a um admin pra cadastrar as salas do prédio.</div>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
-          {salas.map((sala) => (
-            <div key={sala.id} className="card">
-              <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', borderLeft: `3px solid ${sala.cor}` }}>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-md)', color: 'var(--ink)' }}>{sala.nome}</span>
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-soft)' }}>
-                  {sala.andar ? `${sala.andar} · ` : ''}{sala.capacidade ? `${sala.capacidade} lugares` : 'Capacidade não informada'}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="page-header" style={{ marginTop: 'var(--space-8)' }}>
-        <div>
-          <div className="page-eyebrow">Prédio</div>
-          <div className="page-title">Mapa das salas</div>
-        </div>
       </div>
       <MapaPlantas ehAdmin={ehAdmin} />
 

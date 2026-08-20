@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-const SELECT = 'id, sala_id, usuario_id, empresa_id, titulo, inicio, fim, status, cancelado_em, created_at, salas ( nome, cor ), perfis!reservas_usuario_id_fkey ( nome, email ), empresas ( nome )'
+const SELECT = 'id, sala_id, usuario_id, empresa_id, titulo, responsavel, convidados, inicio, fim, status, cancelado_em, created_at, salas ( nome, cor, andar, capacidade ), perfis!reservas_usuario_id_fkey ( nome, email ), empresas ( nome )'
 
 /** Reservas dentro de um intervalo [inicioISO, fimISO), opcionalmente filtradas por usuário. */
 export function useReservas({ inicioISO, fimISO, usuarioId, somenteConfirmadas = false } = {}) {
@@ -26,11 +26,13 @@ export function useReservas({ inicioISO, fimISO, usuarioId, somenteConfirmadas =
 
   useEffect(() => { recarregar() }, [recarregar])
 
-  async function criarReserva({ salaId, usuarioId: dono, titulo, inicio, fim }) {
+  async function criarReserva({ salaId, usuarioId: dono, titulo, responsavel, convidados, inicio, fim }) {
     const { error } = await supabase.from('reservas').insert({
       sala_id: salaId,
       usuario_id: dono,
       titulo,
+      responsavel,
+      convidados,
       inicio,
       fim,
     })

@@ -48,6 +48,8 @@ export default function Agenda() {
         salaId: dados.sala_id,
         usuarioId: session.user.id,
         titulo: dados.titulo,
+        responsavel: dados.responsavel,
+        convidados: dados.convidados,
         inicio: dados.inicio,
         fim: dados.fim,
       })
@@ -95,6 +97,7 @@ export default function Agenda() {
         <FormularioReserva
           salas={salas}
           valoresIniciais={formulario}
+          nomeUsuario={perfil?.nome}
           souDono={!formulario.id || formulario.usuario_id === session?.user?.id}
           ehAdmin={perfil?.role === 'admin'}
           onSalvar={salvar}

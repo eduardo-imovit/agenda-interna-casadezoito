@@ -6,16 +6,19 @@ function paraInputDatetime(date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export default function FormularioReserva({ salas, valoresIniciais, souDono, ehAdmin, onSalvar, onCancelarReserva, onFechar }) {
+export default function FormularioReserva({ salas, valoresIniciais, nomeUsuario, souDono, ehAdmin, onSalvar, onCancelarReserva, onFechar }) {
   const editando = Boolean(valoresIniciais?.id)
   const [salaId, setSalaId] = useState(valoresIniciais.sala_id ?? salas[0]?.id ?? '')
   const [titulo, setTitulo] = useState(valoresIniciais.titulo ?? '')
+  const [responsavel, setResponsavel] = useState(valoresIniciais.responsavel ?? nomeUsuario ?? '')
+  const [convidados, setConvidados] = useState((valoresIniciais.convidados ?? []).join(', '))
   const [inicio, setInicio] = useState(paraInputDatetime(valoresIniciais.inicio))
   const [fim, setFim] = useState(paraInputDatetime(valoresIniciais.fim))
   const [erro, setErro] = useState('')
   const [salvando, setSalvando] = useState(false)
 
   const podeEditar = !editando || souDono || ehAdmin
+  const salaSelecionada = salas.find((s) => s.id === salaId)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -29,6 +32,8 @@ export default function FormularioReserva({ salas, valoresIniciais, souDono, ehA
       await onSalvar({
         sala_id: salaId,
         titulo,
+        responsavel,
+        convidados: convidados.split(',').map((c) => c.trim()).filter(Boolean),
         inicio: new Date(inicio).toISOString(),
         fim: new Date(fim).toISOString(),
       })
@@ -66,11 +71,33 @@ export default function FormularioReserva({ salas, valoresIniciais, souDono, ehA
               <select value={salaId} onChange={(e) => setSalaId(e.target.value)} disabled={!podeEditar} required>
                 {salas.map((s) => <option key={s.id} value={s.id}>{s.nome}</option>)}
               </select>
+              {salaSelecionada && (
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-soft)' }}>
+                  {salaSelecionada.andar ? `${salaSelecionada.andar} · ` : ''}
+                  {salaSelecionada.capacidade ? `${salaSelecionada.capacidade} lugares` : 'Capacidade não informada'}
+                </span>
+              )}
             </div>
 
             <div className="field">
               <label>Título</label>
               <input value={titulo} onChange={(e) => setTitulo(e.target.value)} disabled={!podeEditar} required placeholder="Ex: Reunião com cliente" />
+            </div>
+
+            <div className="field">
+              <label>Responsável pela reunião</label>
+              <input value={responsavel} onChange={(e) => setResponsavel(e.target.value)} disabled={!podeEditar} required placeholder="Nome do responsável" />
+            </div>
+
+            <div className="field">
+              <label>Convidados</label>
+              <input
+                value={convidados}
+                onChange={(e) => setConvidados(e.target.value)}
+                disabled={!podeEditar}
+                placeholder="Nomes ou e-mails separados por vírgula"
+              />
+              <span className="field-hint">Opcional. Separe mais de um convidado por vírgula.</span>
             </div>
 
             <div className="form-grid-2">
