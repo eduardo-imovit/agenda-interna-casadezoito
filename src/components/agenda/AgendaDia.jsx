@@ -99,10 +99,12 @@ export default function AgendaDia({ reservas, salaFiltro, onEventoClick }) {
               onClick={() => onEventoClick?.(r)}
             >
               <div className="dia-evento-titulo">{r.titulo}</div>
-              <div className="dia-evento-sub">{formatarHora(r.inicio)}–{formatarHora(r.fim)} · {r.salas?.nome}</div>
-              {(r.responsavel || r.empresas?.nome) && (
-                <div className="dia-evento-sub">{r.responsavel}{r.responsavel && r.empresas?.nome ? ' · ' : ''}{r.empresas?.nome}</div>
-              )}
+              <div className="dia-evento-sub">
+                {formatarHora(r.inicio)}–{formatarHora(r.fim)} · {r.salas?.nome}
+                {[r.responsavel, r.empresas?.nome].filter(Boolean).length > 0
+                  ? ` · ${[r.responsavel, r.empresas?.nome].filter(Boolean).join(' · ')}`
+                  : ''}
+              </div>
             </div>
           )
         })}
