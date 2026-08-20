@@ -100,6 +100,9 @@ export default function AgendaDia({ reservas, salaFiltro, onEventoClick }) {
             >
               <div className="dia-evento-titulo">{r.titulo}</div>
               <div className="dia-evento-sub">{formatarHora(r.inicio)}–{formatarHora(r.fim)} · {r.salas?.nome}</div>
+              {(r.responsavel || r.empresas?.nome) && (
+                <div className="dia-evento-sub">{r.responsavel}{r.responsavel && r.empresas?.nome ? ' · ' : ''}{r.empresas?.nome}</div>
+              )}
             </div>
           )
         })}
