@@ -1,6 +1,7 @@
 // Chamada por um Database Webhook em `reservas` (INSERT/UPDATE/DELETE).
 // Mantém o evento na agenda pessoal do dono da reserva em dia — se ele nunca
-// conectou o Google, é um no-op silencioso.
+// conectou o Google, é um no-op silencioso. Convidados com e-mail válido
+// recebem convite/atualização do Google por e-mail (sendUpdates=all).
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
@@ -15,6 +16,14 @@ type Reserva = {
   fim: string
   status: 'confirmada' | 'cancelada'
   google_event_id: string | null
+  convidados: string[] | null
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+/** `convidados` aceita nomes ou e-mails misturados; só o que parece e-mail vira convite real. */
+function emailsConvidados(convidados: string[] | null): { email: string }[] {
+  return (convidados ?? []).filter((c) => EMAIL_RE.test(c.trim())).map((c) => ({ email: c.trim() }))
 }
 
 type Payload = {
@@ -46,13 +55,19 @@ async function accessTokenDoUsuario(usuarioId: string): Promise<string | null> {
   return obterAccessToken(data.refresh_token)
 }
 
-type EventoReserva = { titulo: string; inicio: string; fim: string }
+type EventoReserva = { titulo: string; inicio: string; fim: string; convidados: string[] | null }
 
+/** sendUpdates=all faz o Google mandar e-mail de convite/atualização pros attendees. */
 async function criarEvento(accessToken: string, evento: EventoReserva): Promise<string> {
-  const res = await fetch(CALENDAR_EVENTS_URL, {
+  const res = await fetch(`${CALENDAR_EVENTS_URL}?sendUpdates=all`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ summary: evento.titulo, start: { dateTime: evento.inicio }, end: { dateTime: evento.fim } }),
+    body: JSON.stringify({
+      summary: evento.titulo,
+      start: { dateTime: evento.inicio },
+      end: { dateTime: evento.fim },
+      attendees: emailsConvidados(evento.convidados),
+    }),
   })
   if (!res.ok) throw new Error(`Falha ao criar evento: ${await res.text()}`)
   const data = await res.json()
@@ -60,10 +75,15 @@ async function criarEvento(accessToken: string, evento: EventoReserva): Promise<
 }
 
 async function atualizarEvento(accessToken: string, eventId: string, evento: EventoReserva): Promise<void> {
-  const res = await fetch(`${CALENDAR_EVENTS_URL}/${eventId}`, {
+  const res = await fetch(`${CALENDAR_EVENTS_URL}/${eventId}?sendUpdates=all`, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ summary: evento.titulo, start: { dateTime: evento.inicio }, end: { dateTime: evento.fim } }),
+    body: JSON.stringify({
+      summary: evento.titulo,
+      start: { dateTime: evento.inicio },
+      end: { dateTime: evento.fim },
+      attendees: emailsConvidados(evento.convidados),
+    }),
   })
   if (!res.ok && res.status !== 404) throw new Error(`Falha ao atualizar evento: ${await res.text()}`)
 }
@@ -89,7 +109,7 @@ Deno.serve(async (req) => {
       if (r.status !== 'confirmada') return new Response('ok')
       const accessToken = await accessTokenDoUsuario(r.usuario_id)
       if (!accessToken) return new Response('sem google conectado')
-      const eventId = await criarEvento(accessToken, { titulo: r.titulo, inicio: r.inicio, fim: r.fim })
+      const eventId = await criarEvento(accessToken, { titulo: r.titulo, inicio: r.inicio, fim: r.fim, convidados: r.convidados })
       await admin.from('reservas').update({ google_event_id: eventId }).eq('id', r.id)
       return new Response('criado')
     }
@@ -107,13 +127,14 @@ Deno.serve(async (req) => {
 
       if (r.status === 'confirmada') {
         if (!r.google_event_id) {
-          const eventId = await criarEvento(accessToken, { titulo: r.titulo, inicio: r.inicio, fim: r.fim })
+          const eventId = await criarEvento(accessToken, { titulo: r.titulo, inicio: r.inicio, fim: r.fim, convidados: r.convidados })
           await admin.from('reservas').update({ google_event_id: eventId }).eq('id', r.id)
           return new Response('criado')
         }
         const mudou = r.titulo !== antes.titulo || r.inicio !== antes.inicio || r.fim !== antes.fim || r.sala_id !== antes.sala_id
+          || JSON.stringify(r.convidados) !== JSON.stringify(antes.convidados)
         if (mudou) {
-          await atualizarEvento(accessToken, r.google_event_id, { titulo: r.titulo, inicio: r.inicio, fim: r.fim })
+          await atualizarEvento(accessToken, r.google_event_id, { titulo: r.titulo, inicio: r.inicio, fim: r.fim, convidados: r.convidados })
           return new Response('atualizado')
         }
       }

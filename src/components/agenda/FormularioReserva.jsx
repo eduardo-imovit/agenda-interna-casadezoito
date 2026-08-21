@@ -121,7 +121,11 @@ export default function FormularioReserva({ salas, valoresIniciais, nomeUsuario,
                 disabled={!podeEditar}
                 placeholder="Nomes ou e-mails separados por vírgula"
               />
-              <span className="field-hint">Opcional. Separe mais de um convidado por vírgula.</span>
+              <span className="field-hint">
+                Opcional. Separe mais de um convidado por vírgula. Quem tiver e-mail recebe um convite do Google
+                Calendar automaticamente, desde que o {souDono || !editando ? 'responsável' : 'dono da reserva'} tenha
+                conectado o Google em "Perfil".
+              </span>
             </div>
 
             <div className="form-grid-2">
