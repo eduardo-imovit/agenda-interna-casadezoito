@@ -58,6 +58,10 @@ export default function AgendaDia({ reservas, salaFiltro, onEventoClick }) {
 
   const alturaTotal = (HORA_FIM - HORA_INICIO) * ALTURA_HORA
   const layout = useMemo(() => calcularLayout(reservas), [reservas])
+  const reservasOrdenadas = useMemo(
+    () => [...reservas].sort((a, b) => a.inicio.localeCompare(b.inicio)),
+    [reservas],
+  )
 
   if (reservas.length === 0) {
     return (
@@ -71,44 +75,73 @@ export default function AgendaDia({ reservas, salaFiltro, onEventoClick }) {
   }
 
   return (
-    <div className="dia-shell">
-      <div className="dia-gutter">
-        {horas.map((h) => (
-          <div key={h} className="dia-gutter-hora" style={{ top: (h - HORA_INICIO) * ALTURA_HORA }}>
-            {String(h).padStart(2, '0')}:00
-          </div>
-        ))}
+    <>
+      {/* Grade horizontal por horário — boa pra visualizar sobreposições, mas exige tela larga. */}
+      <div className="dia-shell dia-grade">
+        <div className="dia-gutter">
+          {horas.map((h) => (
+            <div key={h} className="dia-gutter-hora" style={{ top: (h - HORA_INICIO) * ALTURA_HORA }}>
+              {String(h).padStart(2, '0')}:00
+            </div>
+          ))}
+        </div>
+
+        <div className="dia-corpo" style={{ height: alturaTotal, '--dia-hora-altura': `${ALTURA_HORA}px` }}>
+          {layout.map(({ reserva: r, inicioMin, fimMin, colIdx, totalColunas }) => {
+            const top = inicioMin * (ALTURA_HORA / 60)
+            const altura = Math.max(22, (fimMin - inicioMin) * (ALTURA_HORA / 60))
+            const largura = 100 / totalColunas
+            return (
+              <div
+                key={r.id}
+                className="dia-evento"
+                style={{
+                  top,
+                  height: altura,
+                  left: `calc(${colIdx * largura}% + 2px)`,
+                  width: `calc(${largura}% - 4px)`,
+                  '--evento-cor': r.salas?.cor,
+                }}
+                onClick={() => onEventoClick?.(r)}
+              >
+                <div className="dia-evento-titulo">{r.titulo}</div>
+                <div className="dia-evento-sub">
+                  {formatarHora(r.inicio)}–{formatarHora(r.fim)} · {r.salas?.nome}
+                  {[r.responsavel, r.empresas?.nome].filter(Boolean).length > 0
+                    ? ` · ${[r.responsavel, r.empresas?.nome].filter(Boolean).join(' · ')}`
+                    : ''}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      <div className="dia-corpo" style={{ height: alturaTotal, '--dia-hora-altura': `${ALTURA_HORA}px` }}>
-        {layout.map(({ reserva: r, inicioMin, fimMin, colIdx, totalColunas }) => {
-          const top = inicioMin * (ALTURA_HORA / 60)
-          const altura = Math.max(22, (fimMin - inicioMin) * (ALTURA_HORA / 60))
-          const largura = 100 / totalColunas
-          return (
-            <div
-              key={r.id}
-              className="dia-evento"
-              style={{
-                top,
-                height: altura,
-                left: `calc(${colIdx * largura}% + 2px)`,
-                width: `calc(${largura}% - 4px)`,
-                '--evento-cor': r.salas?.cor,
-              }}
-              onClick={() => onEventoClick?.(r)}
-            >
-              <div className="dia-evento-titulo">{r.titulo}</div>
-              <div className="dia-evento-sub">
+      {/* Lista cronológica — assume no celular, sem scroll lateral. */}
+      <div className="dia-lista">
+        {reservasOrdenadas.map((r) => (
+          <div
+            key={r.id}
+            className="agenda-item"
+            style={{ cursor: 'pointer' }}
+            onClick={() => onEventoClick?.(r)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEventoClick?.(r) } }}
+            role="button"
+            tabIndex={0}
+          >
+            <span className="agenda-dot" style={{ background: r.salas?.cor }} />
+            <div className="agenda-info">
+              <div className="agenda-title">{r.titulo}</div>
+              <div className="agenda-sub">
                 {formatarHora(r.inicio)}–{formatarHora(r.fim)} · {r.salas?.nome}
                 {[r.responsavel, r.empresas?.nome].filter(Boolean).length > 0
                   ? ` · ${[r.responsavel, r.empresas?.nome].filter(Boolean).join(' · ')}`
                   : ''}
               </div>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
-    </div>
+    </>
   )
 }

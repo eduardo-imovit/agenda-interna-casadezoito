@@ -32,6 +32,15 @@
 @media (max-width: 480px) {
   .form-grid-2 { grid-template-columns: 1fr; }
 }
+
+/* ------- AGENDA DO DIA: grade vira lista em telas estreitas (sem scroll lateral) ------- */
+.dia-lista { display: none; flex-direction: column; gap: var(--space-2); }
+
+@media (max-width: 640px) {
+  .dia-grade { display: none; }
+  .dia-lista { display: flex; }
+  .grade-nav-title { min-width: 0; flex: 1 1 auto; text-align: center; }
+}
 .page-eyebrow {
   font-size: var(--text-xs);
   text-transform: uppercase;
@@ -126,7 +135,7 @@
   gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
-.grade-nav-left { display: flex; align-items: center; gap: var(--space-3); }
+.grade-nav-left { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; row-gap: var(--space-2); }
 .grade-nav-arrows { display: flex; gap: 4px; }
 .grade-nav-title { font-size: var(--text-lg); font-weight: var(--weight-light); color: var(--ink); min-width: 220px; }
 
