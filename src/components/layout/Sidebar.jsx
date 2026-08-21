@@ -8,6 +8,7 @@ const links = [
   { to: '/', label: 'Home', end: true },
   { to: '/agenda', label: 'Agenda das salas', end: true },
   { to: '/minhas-reservas', label: 'Minhas reservas', end: true },
+  { to: '/como-usar', label: 'Como usar', end: true },
   { to: '/manual', label: 'Manual da Casa', end: true },
   { to: '/perfil', label: 'Perfil', end: true },
   {

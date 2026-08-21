@@ -9,6 +9,7 @@ import Configuracoes from './pages/Configuracoes'
 import Dashboard from './pages/Dashboard'
 import Perfil from './pages/Perfil'
 import Manual from './pages/Manual'
+import ComoUsar from './pages/ComoUsar'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/agenda" element={<ProtectedRoute><Agenda /></ProtectedRoute>} />
         <Route path="/minhas-reservas" element={<ProtectedRoute><MinhasReservas /></ProtectedRoute>} />
         <Route path="/manual" element={<ProtectedRoute><Manual /></ProtectedRoute>} />
+        <Route path="/como-usar" element={<ProtectedRoute><ComoUsar /></ProtectedRoute>} />
         <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
         <Route path="/configuracoes" element={<ProtectedRoute somenteAdmin><Configuracoes /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute somenteAdmin><Dashboard /></ProtectedRoute>} />
