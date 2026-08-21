@@ -83,20 +83,21 @@
   padding: 0 var(--space-4);
   border: 1.5px solid var(--line);
   border-radius: var(--radius-md);
-  font-size: var(--text-sm);
+  /* 16px de base: menor que isso faz o iOS Safari dar zoom automático ao focar o campo. */
+  font-size: 16px;
   color: var(--ink);
   background: var(--surface);
   outline: none;
   transition: border-color var(--duration-fast) var(--ease-out);
 }
+
+@media (min-width: 861px) {
+  .field input, .field select, .field textarea { font-size: var(--text-sm); }
+}
 .field input::placeholder, .field textarea::placeholder { color: var(--ink-faint); }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
 .field textarea { height: 88px; padding: var(--space-3) var(--space-4); resize: vertical; line-height: 1.5; }
 
-@media (max-width: 860px) {
-  /* Menor que 16px faz o iOS Safari dar zoom automático ao focar o campo. */
-  .field input, .field select, .field textarea { font-size: 16px; }
-}
 .field-hint { font-size: 11px; color: var(--ink-soft); }
 .field-error input, .field-error select, .field-error textarea { border-color: var(--danger); }
 .field-error .field-hint { color: var(--danger); }
@@ -207,21 +208,20 @@
 .modal-overlay {
   position: fixed; inset: 0;
   background: rgba(45,45,45,.45);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-end; justify-content: center;
   z-index: var(--z-modal);
-  padding: var(--space-5);
+  padding: var(--space-3);
   animation: fade-in var(--duration-base) var(--ease-out);
 }
 .modal {
   background: var(--surface);
   border-radius: var(--radius-xl);
-  max-width: 480px;
+  max-width: none;
   width: 100%;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
   animation: modal-in var(--duration-base) var(--ease-spring);
 }
-.modal-lg { max-width: 720px; }
 .modal-header {
   padding: var(--space-5) var(--space-6) var(--space-3);
   display: flex; align-items: flex-start; justify-content: space-between;
@@ -238,14 +238,16 @@
 .modal-footer {
   padding: var(--space-4) var(--space-6);
   background: var(--bg);
-  display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-3);
+  display: flex; flex-direction: column-reverse; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-3);
 }
+.modal-footer .btn { width: 100%; }
 
-@media (max-width: 480px) {
-  .modal-overlay { padding: var(--space-3); align-items: flex-end; }
-  .modal { max-width: none; }
-  .modal-footer { flex-direction: column-reverse; }
-  .modal-footer .btn { width: 100%; }
+@media (min-width: 641px) {
+  .modal-overlay { padding: var(--space-5); align-items: center; }
+  .modal { max-width: 480px; }
+  .modal-lg { max-width: 720px; }
+  .modal-footer { flex-direction: row; }
+  .modal-footer .btn { width: auto; }
 }
 .modal-close {
   background: transparent; border: none; cursor: pointer;
@@ -529,19 +531,38 @@
 .tt:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ============================================================
-   SIDEBAR NAV
+   SIDEBAR NAV — mobile-first: painel de largura total que abre
+   pra baixo, colado na navbar. Vira coluna fixa lateral só em
+   telas largas (ver media query no fim da seção).
    ============================================================ */
 .sidebar {
-  width: 240px; flex-shrink: 0;
   background: var(--ink);
   color: #aaa;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
   overflow-y: auto;
   display: flex; flex-direction: column;
   padding: var(--space-5) var(--space-3);
+
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: calc(100vh - 56px);
+  z-index: var(--z-drawer);
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform var(--duration-base) var(--ease-out),
+              opacity var(--duration-base) var(--ease-out),
+              visibility 0s linear var(--duration-base);
+}
+.sidebar.is-open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition: transform var(--duration-base) var(--ease-out),
+              opacity var(--duration-base) var(--ease-out);
 }
 .sidebar-brand {
   padding: 0 var(--space-3) var(--space-5);
@@ -584,54 +605,61 @@
 .sidebar-footer-name { font-size: var(--text-xs); color: var(--surface); font-weight: var(--weight-medium); }
 .sidebar-footer-role { font-size: 10px; color: #888; }
 
-/* ------- MOBILE: sidebar vira gaveta, topbar fixa com botão de menu ------- */
-.app-topbar { display: none; }
-.sidebar-backdrop { display: none; }
+/* ------- NAVBAR: sempre visível e acima do conteúdo em telas estreitas.
+   O botão de menu abre o painel de navegação logo abaixo dela. ------- */
+.app-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  height: 56px;
+  padding: 0 var(--space-4);
+  background: var(--ink);
+  color: var(--surface);
+}
+.app-topbar-burger {
+  background: transparent;
+  border: none;
+  color: var(--surface);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: var(--space-2);
+  margin: calc(var(--space-2) * -1);
+}
+.app-topbar-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--primary-light); }
 
-@media (max-width: 860px) {
-  .app-topbar {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    position: sticky;
-    top: 0;
-    z-index: var(--z-sticky);
-    height: 56px;
-    padding: 0 var(--space-4);
-    background: var(--ink);
-    color: var(--surface);
-  }
-  .app-topbar-burger {
-    background: transparent;
-    border: none;
-    color: var(--surface);
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    padding: var(--space-2);
-    margin: calc(var(--space-2) * -1);
-  }
-  .app-topbar-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--primary-light); }
+.sidebar-backdrop {
+  display: block;
+  position: fixed;
+  inset: 56px 0 0 0;
+  background: rgba(20,16,14,.45);
+  z-index: calc(var(--z-drawer) - 1);
+  animation: fade-in var(--duration-base) var(--ease-out);
+}
+
+/* ------- DESKTOP: navbar some, o menu vira coluna fixa ao lado do conteúdo ------- */
+@media (min-width: 861px) {
+  .app-topbar { display: none; }
+  .sidebar-backdrop { display: none; }
 
   .sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    width: min(280px, 82vw);
+    position: sticky;
+    top: 0;
+    left: auto;
+    right: auto;
+    width: 240px;
+    flex-shrink: 0;
     height: 100vh;
-    z-index: var(--z-drawer);
-    box-shadow: var(--shadow-xl);
-    transform: translateX(-100%);
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-  .sidebar.is-open { transform: translateX(0); }
-
-  .sidebar-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(20,16,14,.45);
-    z-index: calc(var(--z-drawer) - 1);
-    animation: fade-in var(--duration-base) var(--ease-out);
+    max-height: none;
+    align-self: flex-start;
+    box-shadow: none;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
   }
 }
 

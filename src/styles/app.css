@@ -3,16 +3,20 @@
    Depende de tokens.css e components.css (não duplica nada de lá)
    ============================================================ */
 
-/* ------- APP SHELL ------- */
+/* ------- APP SHELL -------
+   Mobile-first: 1 coluna, navbar sempre no topo. O layout de sidebar
+   fixa ao lado vira um "extra" que só aparece a partir de --bp-desktop. */
 .app-shell {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--bg);
 }
 .app-main {
   flex: 1;
   min-width: 0;
-  padding: var(--space-6) var(--space-7);
+  width: 100%;
+  padding: var(--space-4);
 }
 .page-header {
   display: flex;
@@ -23,23 +27,25 @@
   margin-bottom: var(--space-6);
 }
 .table-scroll { overflow-x: auto; }
-.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.form-grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
 
-@media (max-width: 860px) {
-  .app-main { padding: var(--space-4); }
+@media (min-width: 641px) {
+  .form-grid-2 { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 480px) {
-  .form-grid-2 { grid-template-columns: 1fr; }
+@media (min-width: 861px) {
+  .app-shell { flex-direction: row; }
+  .app-main { padding: var(--space-6) var(--space-7); }
 }
 
-/* ------- AGENDA DO DIA: grade vira lista em telas estreitas (sem scroll lateral) ------- */
-.dia-lista { display: none; flex-direction: column; gap: var(--space-2); }
+/* ------- AGENDA DO DIA: em 1 coluna é lista cronológica; a grade por
+   horário (que exige rolagem horizontal) só entra em telas largas. ------- */
+.dia-grade { display: none; }
+.dia-lista { display: flex; flex-direction: column; gap: var(--space-2); }
 
-@media (max-width: 640px) {
-  .dia-grade { display: none; }
-  .dia-lista { display: flex; }
-  .grade-nav-title { min-width: 0; flex: 1 1 auto; text-align: center; }
+@media (min-width: 641px) {
+  .dia-grade { display: flex; }
+  .dia-lista { display: none; }
 }
 .page-eyebrow {
   font-size: var(--text-xs);
@@ -101,9 +107,13 @@
 /* ------- KPI GRID ------- */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-4);
   margin-bottom: var(--space-6);
+}
+
+@media (min-width: 481px) {
+  .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 }
 
 /* ------- FILTROS ------- */
@@ -137,7 +147,11 @@
 }
 .grade-nav-left { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; row-gap: var(--space-2); }
 .grade-nav-arrows { display: flex; gap: 4px; }
-.grade-nav-title { font-size: var(--text-lg); font-weight: var(--weight-light); color: var(--ink); min-width: 220px; }
+.grade-nav-title { font-size: var(--text-lg); font-weight: var(--weight-light); color: var(--ink); min-width: 0; flex: 1 1 auto; text-align: center; }
+
+@media (min-width: 641px) {
+  .grade-nav-title { min-width: 220px; flex: initial; text-align: left; }
+}
 
 .grade-column-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
