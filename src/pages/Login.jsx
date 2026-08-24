@@ -5,6 +5,31 @@ import { useSession } from '../hooks/useSession'
 import { useEmpresas } from '../hooks/useEmpresas'
 import logoBrown from '../assets/casadezoito/logo-brown.png'
 
+// Traduz o erro do Supabase Auth para uma mensagem acionável. O fallback genérico
+// antigo escondia o motivo real (ex.: 429 de rate limit de e-mail) e fazia parecer
+// bug do app quando era configuração de SMTP.
+function mensagemDeErro(error, fallback) {
+  const codigo = error?.code ?? ''
+  const texto = error?.message ?? ''
+
+  if (codigo === 'over_email_send_rate_limit' || error?.status === 429) {
+    return 'Limite de envio de e-mails atingido. Aguarde alguns minutos e tente de novo — se persistir, avise o administrador.'
+  }
+  if (codigo === 'user_already_exists' || texto.includes('already registered')) {
+    return 'Esse e-mail já tem conta.'
+  }
+  if (codigo === 'email_not_confirmed') {
+    return 'Confirme seu e-mail antes de entrar. Verifique a caixa de entrada e o spam.'
+  }
+  if (codigo === 'invalid_credentials') {
+    return 'E-mail ou senha inválidos.'
+  }
+  if (codigo === 'weak_password') {
+    return 'Senha muito fraca. Use ao menos 6 caracteres.'
+  }
+  return texto ? `${fallback} (${texto})` : fallback
+}
+
 export default function Login() {
   const { session, carregando } = useSession()
   const { empresas } = useEmpresas()
@@ -33,7 +58,7 @@ export default function Login() {
     setEnviando(true)
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
     setEnviando(false)
-    if (error) setErro('E-mail ou senha inválidos.')
+    if (error) setErro(mensagemDeErro(error, 'E-mail ou senha inválidos.'))
   }
 
   async function handleCriarConta(e) {
@@ -52,7 +77,7 @@ export default function Login() {
     })
     setEnviando(false)
     if (error) {
-      setErro(error.message.includes('already registered') ? 'Esse e-mail já tem conta.' : 'Não foi possível criar a conta.')
+      setErro(mensagemDeErro(error, 'Não foi possível criar a conta.'))
       return
     }
     trocarModo('confirme-email')
@@ -65,7 +90,7 @@ export default function Login() {
     const { error } = await supabase.auth.resend({ type: 'signup', email })
     setEnviando(false)
     if (error) {
-      setErro('Não foi possível reenviar o e-mail. Tente de novo em instantes.')
+      setErro(mensagemDeErro(error, 'Não foi possível reenviar o e-mail. Tente de novo em instantes.'))
       return
     }
     setAviso('E-mail reenviado.')
@@ -81,7 +106,7 @@ export default function Login() {
     })
     setEnviando(false)
     if (error) {
-      setErro('Não foi possível enviar o e-mail de recuperação.')
+      setErro(mensagemDeErro(error, 'Não foi possível enviar o e-mail de recuperação.'))
       return
     }
     setAviso('Se esse e-mail tiver conta, enviamos um link de recuperação.')
