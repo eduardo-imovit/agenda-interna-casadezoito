@@ -1,11 +1,4 @@
-const vagasSubsolo = [
-  { area: 'Veraci', uso: 'Vagas demarcadas de uso exclusivo' },
-  { area: 'Imovit', uso: 'Vagas demarcadas de uso exclusivo' },
-  { area: 'Montblanc', uso: 'Vagas demarcadas de uso exclusivo' },
-  { area: 'Larissa Gimenes & Goma Construtora', uso: 'Vagas compartilhadas entre as duas empresas' },
-  { area: 'Clientes – Carga e Descarga', uso: 'Vagas destinadas a visitantes de qualquer empresa da Casa' },
-  { area: 'Motos', uso: 'Vagas exclusivas para motocicletas' },
-]
+import estacionamento from '../assets/casadezoito/estacionamento.webp'
 
 const salasTerreo = [
   { nome: 'Reunião Salão', perfil: 'A menor das três — indicada para reuniões rápidas e objetivas para até 6 pessoas' },
@@ -176,24 +169,11 @@ export default function Manual() {
             O Café Sterna não possui vaga própria demarcada no subsolo e poderá usar a vaga de clientes para carga
             e descarga.
           </p>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Área</th>
-                  <th>Uso</th>
-                </tr>
-              </thead>
-              <tbody>
-                {vagasSubsolo.map((linha) => (
-                  <tr key={linha.area}>
-                    <td>{linha.area}</td>
-                    <td>{linha.uso}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <img
+            src={estacionamento}
+            alt="Mapa do estacionamento do subsolo com as vagas demarcadas por empresa"
+            style={{ width: '100%', maxWidth: 640, borderRadius: 'var(--radius-md)', display: 'block' }}
+          />
         </div>
 
         <div style={{ marginTop: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
