@@ -8,8 +8,13 @@ import MinhasReservas from './pages/MinhasReservas'
 import Configuracoes from './pages/Configuracoes'
 import Dashboard from './pages/Dashboard'
 import Perfil from './pages/Perfil'
-import Manual from './pages/Manual'
 import ComoUsar from './pages/ComoUsar'
+import VisaoGeral from './pages/manual/VisaoGeral'
+import Recepcao from './pages/manual/Recepcao'
+import Copa from './pages/manual/Copa'
+import Limpeza from './pages/manual/Limpeza'
+import Valet from './pages/manual/Valet'
+import Convivencia from './pages/manual/Convivencia'
 
 export default function App() {
   return (
@@ -20,7 +25,12 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/agenda" element={<ProtectedRoute><Agenda /></ProtectedRoute>} />
         <Route path="/minhas-reservas" element={<ProtectedRoute><MinhasReservas /></ProtectedRoute>} />
-        <Route path="/manual" element={<ProtectedRoute><Manual /></ProtectedRoute>} />
+        <Route path="/manual" element={<ProtectedRoute><VisaoGeral /></ProtectedRoute>} />
+        <Route path="/manual/recepcao" element={<ProtectedRoute><Recepcao /></ProtectedRoute>} />
+        <Route path="/manual/copa" element={<ProtectedRoute><Copa /></ProtectedRoute>} />
+        <Route path="/manual/limpeza" element={<ProtectedRoute><Limpeza /></ProtectedRoute>} />
+        <Route path="/manual/valet" element={<ProtectedRoute><Valet /></ProtectedRoute>} />
+        <Route path="/manual/convivencia" element={<ProtectedRoute><Convivencia /></ProtectedRoute>} />
         <Route path="/como-usar" element={<ProtectedRoute><ComoUsar /></ProtectedRoute>} />
         <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
         <Route path="/configuracoes" element={<ProtectedRoute somenteAdmin><Configuracoes /></ProtectedRoute>} />

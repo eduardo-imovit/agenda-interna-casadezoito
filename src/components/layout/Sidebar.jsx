@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { useSession } from '../../hooks/useSession'
 import { usePerfil } from '../../hooks/usePerfil'
@@ -9,7 +9,18 @@ const links = [
   { to: '/agenda', label: 'Agenda das salas', end: true },
   { to: '/minhas-reservas', label: 'Minhas reservas', end: true },
   { to: '/como-usar', label: 'Como usar', end: true },
-  { to: '/manual', label: 'Manual da Casa', end: true },
+  {
+    to: '/manual',
+    label: 'Manual da Casa',
+    end: true,
+    children: [
+      { to: '/manual/recepcao', label: 'Recepção' },
+      { to: '/manual/copa', label: 'Copa' },
+      { to: '/manual/limpeza', label: 'Limpeza' },
+      { to: '/manual/valet', label: 'Valet & Segurança' },
+      { to: '/manual/convivencia', label: 'Regras de convivência' },
+    ],
+  },
   { to: '/perfil', label: 'Perfil', end: true },
   {
     to: '/configuracoes',
@@ -23,6 +34,7 @@ const links = [
 export default function Sidebar({ aberto = false, onFechar }) {
   const { session } = useSession()
   const { perfil } = usePerfil()
+  const { pathname } = useLocation()
   const email = session?.user?.email ?? ''
   const iniciais = email.slice(0, 2).toUpperCase()
   const isAdmin = perfil?.role === 'admin'
@@ -41,7 +53,13 @@ export default function Sidebar({ aberto = false, onFechar }) {
       </div>
 
       <div className="sidebar-section">Menu</div>
-      {visiveis.map((link) => (
+      {visiveis.map((link) => {
+        const filhos = link.children?.filter((child) => !child.somenteAdmin || isAdmin) ?? []
+        const secaoAtiva =
+          pathname === link.to ||
+          pathname.startsWith(`${link.to}/`) ||
+          filhos.some((child) => pathname === child.to)
+        return (
         <div key={link.to}>
           <NavLink
             to={link.to}
@@ -52,9 +70,8 @@ export default function Sidebar({ aberto = false, onFechar }) {
             <span className="sidebar-nav-dot" style={{ background: 'currentColor', opacity: 0.6 }} />
             {link.label}
           </NavLink>
-          {link.children
-            ?.filter((child) => !child.somenteAdmin || isAdmin)
-            .map((child) => (
+          {secaoAtiva &&
+            filhos.map((child) => (
               <NavLink
                 key={child.to}
                 to={child.to}
@@ -66,7 +83,8 @@ export default function Sidebar({ aberto = false, onFechar }) {
               </NavLink>
             ))}
         </div>
-      ))}
+        )
+      })}
 
       <div className="sidebar-spacer" />
 
