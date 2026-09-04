@@ -6,9 +6,9 @@ export const horarios = [
 ]
 
 export const salasTerreo = [
-  { nome: 'Reunião Salão', perfil: 'A menor das três — indicada para reuniões rápidas e objetivas para até 6 pessoas' },
+  { nome: 'Reunião Salão', perfil: 'A maior, com sofá e poltronas — ideal para reuniões mais longas e/ou com mais integrantes' },
   { nome: 'Reunião Varanda', perfil: 'Tamanho intermediário, com acesso direto ao jardim' },
-  { nome: 'Reunião Estar', perfil: 'A maior, com sofá e poltronas — ideal para reuniões mais longas e/ou com mais integrantes' },
+  { nome: 'Reunião Estar', perfil: 'A menor das três — indicada para reuniões rápidas e objetivas para até 6 pessoas' },
 ]
 
 export const espacosTerreo = [
